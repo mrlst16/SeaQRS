@@ -10,6 +10,12 @@
     <PackageTags>cqrs;commands;queries;di</PackageTags>
     <RepositoryUrl>https://github.com/YOUR_USERNAME/SeaQRS</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
