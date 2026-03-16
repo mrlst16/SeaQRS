@@ -10,12 +10,11 @@ dotnet add package SeaQRS
 
 ## Concepts
 
-SeaQRS has three building blocks:
+SeaQRS has two building blocks:
 
 | Type | Input | Output | Use for |
 |---|---|---|---|
-| `CommandBase<TResponse>` | none | `TResponse` | operations that return a value |
-| `VoidCommandBase<TRequest>` | `TRequest` | none | fire-and-forget operations |
+| `CommandBase<TRequest>` | `TRequest` | none | operations that change state |
 | `QueryBase<TRequest, TResponse>` | `TRequest` | `TResponse` | reads with a parameter |
 | `QueryBase<TResponse>` | none | `TResponse` | parameterless reads |
 
@@ -24,31 +23,9 @@ SeaQRS has three building blocks:
 ### Command
 
 ```csharp
-public record CreateOrderResponse(Guid OrderId);
-
-public class CreateOrderCommand : CommandBase<CreateOrderResponse>
-{
-    private readonly IOrderRepository _orders;
-
-    public CreateOrderCommand(IOrderRepository orders)
-    {
-        _orders = orders;
-    }
-
-    public override async Task<CreateOrderResponse> Run()
-    {
-        var id = await _orders.CreateAsync();
-        return new CreateOrderResponse(id);
-    }
-}
-```
-
-### Void Command
-
-```csharp
 public record DeleteUserRequest(Guid UserId);
 
-public class DeleteUserCommand : VoidCommandBase<DeleteUserRequest>
+public class DeleteUserCommand : CommandBase<DeleteUserRequest>
 {
     private readonly IUserRepository _users;
 
@@ -91,16 +68,14 @@ public class GetUserQuery : QueryBase<GetUserRequest, UserDto>
 Register your handlers in `Program.cs` using the extension methods on `IServiceCollection`. You control the lifetime of each handler individually.
 
 ```csharp
-services.AddCommandTransient<CreateOrderCommand, CreateOrderResponse>();
-services.AddVoidCommandScoped<DeleteUserCommand, DeleteUserRequest>();
+services.AddCommandScoped<DeleteUserCommand, DeleteUserRequest>();
 services.AddQueryScoped<GetUserQuery, GetUserRequest, UserDto>();
 ```
 
 Each type has `Transient`, `Scoped`, and `Singleton` convenience methods, plus a lifetime overload if you need something dynamic:
 
 ```csharp
-services.AddCommand<CreateOrderCommand, CreateOrderResponse>(ServiceLifetime.Transient);
-services.AddVoidCommand<DeleteUserCommand, DeleteUserRequest>(ServiceLifetime.Scoped);
+services.AddCommand<DeleteUserCommand, DeleteUserRequest>(ServiceLifetime.Scoped);
 services.AddQuery<GetUserQuery, GetUserRequest, UserDto>(ServiceLifetime.Scoped);
 ```
 
@@ -109,27 +84,31 @@ services.AddQuery<GetUserQuery, GetUserRequest, UserDto>(ServiceLifetime.Scoped)
 Handlers are injected as delegates, keeping your consumers decoupled from the handler implementations.
 
 ```csharp
-public class OrdersController : ControllerBase
+public class UsersController : ControllerBase
 {
-    private readonly Func<Task<CreateOrderResponse>> _createOrder;
     private readonly Func<GetUserRequest, Task<UserDto>> _getUser;
     private readonly Func<DeleteUserRequest, Task> _deleteUser;
 
-    public OrdersController(
-        Func<Task<CreateOrderResponse>> createOrder,
+    public UsersController(
         Func<GetUserRequest, Task<UserDto>> getUser,
         Func<DeleteUserRequest, Task> deleteUser)
     {
-        _createOrder = createOrder;
         _getUser = getUser;
         _deleteUser = deleteUser;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create()
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(Guid id)
     {
-        var result = await _createOrder();
+        var result = await _getUser(new GetUserRequest(id));
         return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        await _deleteUser(new DeleteUserRequest(id));
+        return NoContent();
     }
 }
 ```

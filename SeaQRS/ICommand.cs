@@ -1,7 +1,7 @@
-﻿namespace SeaQRS
+namespace SeaQRS
 {
-    public interface ICommand<TResponse>
+    public interface ICommand<TRequest>
     {
-        Task<TResponse> Run();
+        Task Run(TRequest request);
     }
 }

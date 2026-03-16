@@ -1,75 +1,41 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SeaQRS
+namespace SeaQRS.Dependency
 {
-    public static class ServiceCollectionExtension
+    public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCommand<TCommand, TResponse>(
+        public static IServiceCollection AddCommand<TCommand, TRequest>(
             this IServiceCollection services,
             ServiceLifetime lifetime
         )
-            where TCommand : CommandBase<TResponse>
-        {
-            services.Add(new ServiceDescriptor(typeof(Func<Task<TResponse>>), typeof(TCommand), lifetime));
-            return services;
-        }
-
-        public static IServiceCollection AddCommandTransient<TCommand, TResponse>(
-            this IServiceCollection services
-        )
-            where TCommand : CommandBase<TResponse>
-        {
-            return services.AddCommand<TCommand, TResponse>(ServiceLifetime.Transient);
-        }
-
-        public static IServiceCollection AddCommandScoped<TCommand, TResponse>(
-            this IServiceCollection services
-        )
-            where TCommand : CommandBase<TResponse>
-        {
-            return services.AddCommand<TCommand, TResponse>(ServiceLifetime.Scoped);
-        }
-
-        public static IServiceCollection AddCommandSingleton<TCommand, TResponse>(
-            this IServiceCollection services
-        )
-            where TCommand : CommandBase<TResponse>
-        {
-            return services.AddCommand<TCommand, TResponse>(ServiceLifetime.Singleton);
-        }
-
-        public static IServiceCollection AddVoidCommand<TCommand, TRequest>(
-            this IServiceCollection services,
-            ServiceLifetime lifetime
-        )
-            where TCommand : VoidCommandBase<TRequest>
+            where TCommand : CommandBase<TRequest>
         {
             services.Add(new ServiceDescriptor(typeof(Func<TRequest, Task>), typeof(TCommand), lifetime));
             return services;
         }
 
-        public static IServiceCollection AddVoidCommandTransient<TCommand, TRequest>(
+        public static IServiceCollection AddCommandTransient<TCommand, TRequest>(
             this IServiceCollection services
         )
-            where TCommand : VoidCommandBase<TRequest>
+            where TCommand : CommandBase<TRequest>
         {
-            return services.AddVoidCommand<TCommand, TRequest>(ServiceLifetime.Transient);
+            return services.AddCommand<TCommand, TRequest>(ServiceLifetime.Transient);
         }
 
-        public static IServiceCollection AddVoidCommandScoped<TCommand, TRequest>(
+        public static IServiceCollection AddCommandScoped<TCommand, TRequest>(
             this IServiceCollection services
         )
-            where TCommand : VoidCommandBase<TRequest>
+            where TCommand : CommandBase<TRequest>
         {
-            return services.AddVoidCommand<TCommand, TRequest>(ServiceLifetime.Scoped);
+            return services.AddCommand<TCommand, TRequest>(ServiceLifetime.Scoped);
         }
 
-        public static IServiceCollection AddVoidCommandSingleton<TCommand, TRequest>(
+        public static IServiceCollection AddCommandSingleton<TCommand, TRequest>(
             this IServiceCollection services
         )
-            where TCommand : VoidCommandBase<TRequest>
+            where TCommand : CommandBase<TRequest>
         {
-            return services.AddVoidCommand<TCommand, TRequest>(ServiceLifetime.Singleton);
+            return services.AddCommand<TCommand, TRequest>(ServiceLifetime.Singleton);
         }
 
         public static IServiceCollection AddQuery<TQuery, TRequest, TResponse>(
