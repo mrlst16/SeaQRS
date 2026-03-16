@@ -5,7 +5,8 @@
       "Bash(curl -s https://api.github.com/repos/mrlst16/SeaQRS)",
       "Bash(curl -s https://api.github.com/repos/mrlst16/SeaQRS/git/trees/main?recursive=1)",
       "Bash(curl -s https://api.github.com/repos/mrlst16/SeaQRS/commits)",
-      "Bash(curl -s https://raw.githubusercontent.com/github/gitignore/main/VisualStudio.gitignore -o .gitignore)"
+      "Bash(curl -s https://raw.githubusercontent.com/github/gitignore/main/VisualStudio.gitignore -o .gitignore)",
+      "Bash(git -C /c/Repositories/SeaQRS branch -m main)"
     ]
   }
 }
