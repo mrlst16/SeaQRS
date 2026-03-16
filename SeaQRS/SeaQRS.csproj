@@ -4,6 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>SeaQRS</PackageId>
+    <Authors>YOUR_NAME</Authors>
+    <Description>A lightweight CQRS library for .NET that provides strongly-typed commands and queries with delegate-based dependency injection.</Description>
+    <PackageTags>cqrs;commands;queries;di</PackageTags>
+    <RepositoryUrl>https://github.com/YOUR_USERNAME/SeaQRS</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
 </Project>
