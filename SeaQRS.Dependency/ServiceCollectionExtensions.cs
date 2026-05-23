@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using SeaQRS;
 
 namespace SeaQRS.Dependency
 {
@@ -10,7 +11,7 @@ namespace SeaQRS.Dependency
         )
             where TCommand : CommandBase<TRequest>
         {
-            services.Add(new ServiceDescriptor(typeof(Func<TRequest, Task>), typeof(TCommand), lifetime));
+            services.Add(new ServiceDescriptor(typeof(ICommand<TRequest>), typeof(TCommand), lifetime));
             return services;
         }
 
@@ -44,7 +45,7 @@ namespace SeaQRS.Dependency
         )
             where TQuery : QueryBase<TRequest, TResponse>
         {
-            services.Add(new ServiceDescriptor(typeof(Func<TRequest, Task<TResponse>>), typeof(TQuery), lifetime));
+            services.Add(new ServiceDescriptor(typeof(IQuery<TRequest, TResponse>), typeof(TQuery), lifetime));
             return services;
         }
 
@@ -78,7 +79,7 @@ namespace SeaQRS.Dependency
         )
             where TQuery : QueryBase<TResponse>
         {
-            services.Add(new ServiceDescriptor(typeof(Func<Task<TResponse>>), typeof(TQuery), lifetime));
+            services.Add(new ServiceDescriptor(typeof(IQuery<TResponse>), typeof(TQuery), lifetime));
             return services;
         }
 
