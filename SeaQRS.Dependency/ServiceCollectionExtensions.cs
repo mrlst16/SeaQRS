@@ -39,6 +39,40 @@ namespace SeaQRS.Dependency
             return services.AddCommand<TCommand, TRequest>(ServiceLifetime.Singleton);
         }
 
+        public static IServiceCollection AddCommand<TCommand, TRequest, TResponse>(
+            this IServiceCollection services,
+            ServiceLifetime lifetime
+        )
+            where TCommand : CommandBase<TRequest, TResponse>
+        {
+            services.Add(new ServiceDescriptor(typeof(ICommand<TRequest, TResponse>), typeof(TCommand), lifetime));
+            return services;
+        }
+
+        public static IServiceCollection AddCommandTransient<TCommand, TRequest, TResponse>(
+            this IServiceCollection services
+        )
+            where TCommand : CommandBase<TRequest, TResponse>
+        {
+            return services.AddCommand<TCommand, TRequest, TResponse>(ServiceLifetime.Transient);
+        }
+
+        public static IServiceCollection AddCommandScoped<TCommand, TRequest, TResponse>(
+            this IServiceCollection services
+        )
+            where TCommand : CommandBase<TRequest, TResponse>
+        {
+            return services.AddCommand<TCommand, TRequest, TResponse>(ServiceLifetime.Scoped);
+        }
+
+        public static IServiceCollection AddCommandSingleton<TCommand, TRequest, TResponse>(
+            this IServiceCollection services
+        )
+            where TCommand : CommandBase<TRequest, TResponse>
+        {
+            return services.AddCommand<TCommand, TRequest, TResponse>(ServiceLifetime.Singleton);
+        }
+
         public static IServiceCollection AddQuery<TQuery, TRequest, TResponse>(
             this IServiceCollection services,
             ServiceLifetime lifetime
